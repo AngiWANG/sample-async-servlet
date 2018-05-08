@@ -29,11 +29,23 @@ public class AsyncServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		logger.info("receive a AsyncServlet request.");
+
+		try {
+			TimeUnit.SECONDS.sleep(3);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		final AsyncContext asyncContext = req.startAsync();
 		asyncContext.setTimeout(30 * 1000);
 		asyncContext.addListener(new AsyncListener() {
 			public void onComplete(AsyncEvent event) throws IOException {
 				logger.info("AsyncServlet complete.");
+				try {
+					TimeUnit.SECONDS.sleep(3);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 			public void onTimeout(AsyncEvent event) throws IOException {
