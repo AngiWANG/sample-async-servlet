@@ -1,7 +1,11 @@
 package servlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
@@ -15,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "asyncServlet", urlPatterns = "/asyncServlet", asyncSupported = true)
 public class AsyncServlet extends HttpServlet {
 
+	Logger logger = LoggerFactory.getLogger(AsyncServlet.class);
+
 	/**
 	 * 
 	 */
@@ -22,38 +28,41 @@ public class AsyncServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("receive a AsyncServlet request.");
+		logger.info("receive a AsyncServlet request.");
 		final AsyncContext asyncContext = req.startAsync();
 		asyncContext.setTimeout(30 * 1000);
 		asyncContext.addListener(new AsyncListener() {
 			public void onComplete(AsyncEvent event) throws IOException {
-				System.out.println("AsyncServlet complete.");
+				logger.info("AsyncServlet complete.");
 			}
 
 			public void onTimeout(AsyncEvent event) throws IOException {
-				System.out.println("AsyncServlet timeout.");
+				logger.info("AsyncServlet timeout.");
 			}
 
 			public void onError(AsyncEvent event) throws IOException {
-				System.out.println("AsyncServlet error.");
+				logger.info("AsyncServlet error.");
 			}
 
 			public void onStartAsync(AsyncEvent event) throws IOException {
-				System.out.println("AsyncServlet Start.");
+				logger.info("AsyncServlet Start.");
 			}
 		});
 		asyncContext.start(new Runnable() {
 			public void run() {
+				logger.info("begin biz");
 				PrintWriter printWriter = null;
 				try {
+					TimeUnit.SECONDS.sleep(20);
 					printWriter = asyncContext.getResponse().getWriter();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				printWriter.println("Hello, AsyncServlet.");
 				printWriter.flush();
 				printWriter.close();
 				asyncContext.complete();
+				logger.info("end biz");
 			}
 		});
 	}
