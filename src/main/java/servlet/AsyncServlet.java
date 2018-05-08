@@ -40,7 +40,7 @@ public class AsyncServlet extends HttpServlet {
 		asyncContext.setTimeout(30 * 1000);
 		asyncContext.addListener(new AsyncListener() {
 			public void onComplete(AsyncEvent event) throws IOException {
-				logger.info("AsyncServlet complete.");
+				logger.info("onComplete");
 				try {
 					TimeUnit.SECONDS.sleep(3);
 				} catch (Exception e) {
@@ -49,15 +49,15 @@ public class AsyncServlet extends HttpServlet {
 			}
 
 			public void onTimeout(AsyncEvent event) throws IOException {
-				logger.info("AsyncServlet timeout.");
+				logger.info("onTimeout");
 			}
 
 			public void onError(AsyncEvent event) throws IOException {
-				logger.info("AsyncServlet error.");
+				logger.info("onError");
 			}
 
 			public void onStartAsync(AsyncEvent event) throws IOException {
-				logger.info("AsyncServlet Start.");
+				logger.info("onStartAsync");
 			}
 		});
 		asyncContext.start(new Runnable() {
@@ -77,5 +77,6 @@ public class AsyncServlet extends HttpServlet {
 				logger.info("end biz");
 			}
 		});
+		logger.info("main over");
 	}
 }
